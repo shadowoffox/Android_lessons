@@ -14,6 +14,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Button button3 = findViewById(R.id.button3);
+        button3.setEnabled(false);
+
+        Switch switch1 = findViewById(R.id.switch1);
+        switch1.setBackgroundColor(Color.YELLOW);
     }
 
 }
