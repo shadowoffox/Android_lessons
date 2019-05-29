@@ -2,4 +2,5 @@
     <string name="app_name">testApp</string>
     <string name="new_window">New Window</string>
     <string name="Button">батон</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>
