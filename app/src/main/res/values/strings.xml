@@ -3,4 +3,11 @@
     <string name="new_window">New Window</string>
     <string name="Button">батон</string>
     <string name="title_activity_main2">Main2Activity</string>
+
+    <string-array name="Towns">
+        <item>Moscow</item>
+        <item>St.Peterburg</item>
+        <item>Tambov</item>
+        <item>Sochi</item>
+    </string-array>
 </resources>
