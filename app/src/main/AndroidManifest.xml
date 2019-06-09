@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar.SkyTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

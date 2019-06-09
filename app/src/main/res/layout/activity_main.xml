@@ -1,52 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/container1"
     tools:context=".MainActivity" >
-
-    <Spinner
-        android:id="@+id/spinner1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
-    <CheckBox
-        android:id="@+id/checkBox1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/spinner1"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="40dp"
-        android:text="moisture" />
-    <CheckBox
-    android:id="@+id/checkBox2"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/spinner1"
-    android:layout_toRightOf="@id/checkBox1"
-    android:layout_centerInParent="true"
-    android:text="wind speed" />
-
-    <CheckBox
-        android:id="@+id/checkBox3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/spinner1"
-        android:layout_toRightOf="@id/checkBox2"
-        android:layout_centerInParent="true"
-        android:text="pressure" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/checkBox3"
-        android:layout_centerInParent="true"
-        android:text="Next" />
-
 
 </RelativeLayout>
