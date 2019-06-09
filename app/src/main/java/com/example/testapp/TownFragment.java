@@ -17,8 +17,6 @@ import java.util.Objects;
 
 public class TownFragment extends Fragment {
 
-    public static final String TOWN = "TOWN";
-
     private Button button;
     private CheckBox checkBox1;
     private CheckBox checkBox2;
@@ -55,11 +53,9 @@ public class TownFragment extends Fragment {
                         .addToBackStack(TownFragment.class.getName())
                         .commit();
             }
-
             //   String msg = String.valueOf(editText.getText());
 
         });
-
 
         return view;
     }

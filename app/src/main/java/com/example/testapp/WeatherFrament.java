@@ -15,17 +15,17 @@ import java.util.List;
 
 public class WeatherFrament extends Fragment {
 
-    public static final String TOWN = "TOWN";
+    private static final String TOWN = "TOWN";
 
-    static String  strMoisture ="";
-    static String strWind_speed ="";
-    static String strPressure = "";
-    List<Weather> states = new ArrayList();
-    ListView list;
-    TextView textView;
-    static boolean moisture;
-    static boolean wind_speed;
-    static boolean pressure;
+    private static String  strMoisture ="";
+    private static String strWind_speed ="";
+    private static String strPressure = "";
+    private List<Weather> states = new ArrayList();
+    private ListView list;
+    private TextView textView;
+    private static boolean moisture;
+    private static boolean wind_speed;
+    private static boolean pressure;
 
     public static WeatherFrament newInstance(String data, boolean myMoisture, boolean myWind_speed, boolean myPressure) {
        Bundle args = new Bundle();
