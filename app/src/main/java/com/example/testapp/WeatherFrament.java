@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,12 +25,14 @@ public class WeatherFrament extends Fragment {
     private static String  strMoisture ="";
     private static String strWind_speed ="";
     private static String strPressure = "";
-    private List<Weather> states = new ArrayList();
+    final List<Weather> states = new ArrayList();
     private RecyclerView recyclerView;
     private TextView textView;
+    private ImageView imageView;
     private static boolean moisture;
     private static boolean wind_speed;
     private static boolean pressure;
+        final WeatherAdapter adapter = new WeatherAdapter(states);
 
     public static WeatherFrament newInstance(String data, boolean myMoisture, boolean myWind_speed, boolean myPressure) {
        Bundle args = new Bundle();
@@ -55,15 +59,28 @@ public class WeatherFrament extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         textView = view.findViewById(R.id.textView);
+        imageView = view.findViewById(R.id.imageView);
+
         textView.setText(getArguments().getString(TOWN));
+
         setInitialData();
 
+        imageView.setOnClickListener(v-> {
+
+            states.add(states.size(), new Weather("Nothing to do there", R.drawable.stormy));
+            adapter.notifyDataSetChanged();
+
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new WeatherAdapter(states));
+        recyclerView.setAdapter(adapter);
+
         System.out.println(states.size());
+
+
         return view;
     }
 
