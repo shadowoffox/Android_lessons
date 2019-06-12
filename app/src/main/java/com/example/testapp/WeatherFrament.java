@@ -6,9 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,7 @@ public class WeatherFrament extends Fragment {
     private static String strWind_speed ="";
     private static String strPressure = "";
     private List<Weather> states = new ArrayList();
-    private ListView list;
+    private RecyclerView recyclerView;
     private TextView textView;
     private static boolean moisture;
     private static boolean wind_speed;
@@ -53,18 +56,14 @@ public class WeatherFrament extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
-        list = view.findViewById(R.id.listView);
-
+        recyclerView = view.findViewById(R.id.recyclerView);
         textView = view.findViewById(R.id.textView);
         textView.setText(getArguments().getString(TOWN));
-
         setInitialData();
 
-        //TODO сделать отсчет от "сегодня" и далее до конца недели. сделать/найти ico для показывания в строках в зависимости от погоды.
-        StateAdapter stateAdapter = new StateAdapter(getActivity(), R.layout.item_weth_layout, states);
-        list.setAdapter(stateAdapter);
-
-
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(new WeatherAdapter(states));
+        System.out.println(states.size());
         return view;
     }
 

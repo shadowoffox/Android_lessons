@@ -26,8 +26,9 @@
         app:srcCompat="@drawable/sunny"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <ListView
-        android:id="@+id/listView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        tools:listitem="@layout/item_weth_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/imageView"
