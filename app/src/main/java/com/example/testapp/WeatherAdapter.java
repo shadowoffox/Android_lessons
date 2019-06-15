@@ -1,3 +1,4 @@
+/*
 package com.example.testapp;
 
 import android.view.LayoutInflater;
@@ -10,7 +11,7 @@ import java.util.List;
 public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
 
 
-    public WeatherAdapter(List<Weather> weatherList) {
+    public WeatherAdapter(List<Object> weatherList) {
         this.weatherList = weatherList;
     }
 
@@ -21,8 +22,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         return new ViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_weth_layout,parent,false)
-        );
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.item_weth_layout, parent, false)
+        ) {
+            @Override
+            public void bindView(Object element) {
+
+            }
+        };
     }
 
     @Override
@@ -38,3 +44,4 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
         return weatherList.size();
     }
 }
+*/
