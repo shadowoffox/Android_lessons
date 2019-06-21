@@ -49,7 +49,7 @@ public class TownFragment extends Fragment {
 
             if (getFragmentManager() != null) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.container1, WeatherFrament.newInstance(msg,moisture,wind_speed,pressure))
+                        .replace(R.id.drawer_layout, WeatherFrament.newInstance(msg,moisture,wind_speed,pressure))
                         .addToBackStack(TownFragment.class.getName())
                         .commit();
             }

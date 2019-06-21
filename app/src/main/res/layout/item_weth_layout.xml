@@ -4,7 +4,7 @@
     android:layout_margin="10dp"
     android:layout_width="match_parent"
     android:layout_height="90dp"
-    app:cardElevation="12dp"
+    app:cardElevation="9dp"
     >
 
 

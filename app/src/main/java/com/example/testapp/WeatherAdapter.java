@@ -1,4 +1,4 @@
-/*
+
 package com.example.testapp;
 
 import android.view.LayoutInflater;
@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class WeatherAdapter extends RecyclerView.Adapter<ViewHolderWeather> {
 
 
-    public WeatherAdapter(List<Object> weatherList) {
+    public WeatherAdapter(List<Weather> weatherList) {
         this.weatherList = weatherList;
     }
 
@@ -19,9 +19,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolderWeather onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new ViewHolder(
+        return new ViewHolderWeather(
                 LayoutInflater.from(parent.getContext()).inflate(R.layout.item_weth_layout, parent, false)
         ) {
             @Override
@@ -32,11 +32,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    Weather weather= weatherList.get(position);
-    holder.resWeather.setText(weather.getRes());
-    holder.icoWeather.setImageResource(weather.getWeatherResource());
+    public void onBindViewHolder(@NonNull ViewHolderWeather holder, int position) {
+        Weather weather= weatherList.get(position);
+        holder.resWeather.setText(weather.getRes());
+        holder.icoWeather.setImageResource(weather.getWeatherResource());
     }
+
 
     @Override
     public int getItemCount() {
@@ -44,4 +45,4 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolder> {
         return weatherList.size();
     }
 }
-*/
+
