@@ -2,36 +2,28 @@ package com.example.testapp;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherFrament extends Fragment {
 
     private static final String TOWN = "TOWN";
-
     private static String  strMoisture ="";
     private static String strWind_speed ="";
     private static String strPressure = "";
+    private String textTemperature;
+    private String textHumidity;
     final List<Weather> states = new ArrayList();
     final WeatherAdapter adapter = new WeatherAdapter(states);
     private RecyclerView recyclerView;
     private TextView textView;
-    private ImageView imageView;
     private static boolean moisture;
     private static boolean wind_speed;
     private static boolean pressure;
@@ -66,24 +58,20 @@ public class WeatherFrament extends Fragment {
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         textView = view.findViewById(R.id.textView);
-        imageView = view.findViewById(R.id.imageView);
-
         textView.setText(getArguments().getString(TOWN));
-
+        Bundle bundle = this.getArguments();
+        if (bundle !=null){
+            textTemperature = bundle.getString("TEMPERATURE");
+            textHumidity = bundle.getString("HUMIDITY");
+        }
         setInitialData();
 
-        imageView.setOnClickListener(v-> {
-
-            states.add(states.size(), new Weather("Nothing to do there", R.drawable.stormy));
-            adapter.notifyDataSetChanged();
-
-        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         System.out.println(states.size());
-
-
+        System.out.println("temp"+textTemperature);
+        System.out.println("hum"+textHumidity);
         return view;
 
     }
@@ -98,5 +86,7 @@ public class WeatherFrament extends Fragment {
         states.add(new Weather ( String.format("Птн +20 %s %s %s",strMoisture,strWind_speed,strPressure), R.drawable.rainy2));
         states.add(new Weather ( String.format("Сб +20 %s %s %s",strMoisture,strWind_speed,strPressure), R.drawable.stormy));
         states.add(new Weather ( String.format("Вс +20 %s %s %s",strMoisture,strWind_speed,strPressure), R.drawable.sunny));
+        states.add(new Weather ( textTemperature, R.drawable.sunny));
+        states.add(new Weather ( textHumidity, R.drawable.rainy2));
     }
 }

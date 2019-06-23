@@ -12,6 +12,10 @@
     <string name="feedback">feedback</string>
     <string name="communicate">Communicate</string>
     <string name="den_is_cool">Den is really cool guy</string>
+    <string name="next">Next</string>
+    <string name="pressure">pressure</string>
+    <string name="wind_speed">wind speed</string>
+    <string name="moisture">moisture</string>
 
     <string-array name="Towns">
         <item>Moscow</item>
