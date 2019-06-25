@@ -1,7 +1,12 @@
 package com.example.testapp;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,14 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.SENSOR_SERVICE;
+
 public class WeatherFrament extends Fragment {
 
     private static final String TOWN = "TOWN";
     private static String  strMoisture ="";
     private static String strWind_speed ="";
     private static String strPressure = "";
-    private String textTemperature;
-    private String textHumidity;
+    private  String textTemperature="";
+    private  String textHumidity="";
     final List<Weather> states = new ArrayList();
     final WeatherAdapter adapter = new WeatherAdapter(states);
     private RecyclerView recyclerView;
@@ -47,6 +54,7 @@ public class WeatherFrament extends Fragment {
         if (pressure) {
             strPressure = "1017mbar";
         }
+
        return frament;
 
     }
@@ -54,27 +62,58 @@ public class WeatherFrament extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         textView = view.findViewById(R.id.textView);
         textView.setText(getArguments().getString(TOWN));
-        Bundle bundle = this.getArguments();
-        if (bundle !=null){
-            textTemperature = bundle.getString("TEMPERATURE");
-            textHumidity = bundle.getString("HUMIDITY");
-        }
+        getSensors();
         setInitialData();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         System.out.println(states.size());
-        System.out.println("temp"+textTemperature);
-        System.out.println("hum"+textHumidity);
+        System.out.println("temp!!"+textTemperature);
+        System.out.println("hum!!"+textHumidity);
+
         return view;
 
     }
+
+
+    private void getSensors(){
+        SensorManager sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        Sensor sensorTemperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        Sensor sensorHumidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+       // if (sensorTemperature != null){
+            sensorManager.registerListener(sensorsListener, sensorTemperature, SensorManager.SENSOR_DELAY_NORMAL);//}
+        //if (sensorHumidity != null){
+            sensorManager.registerListener(sensorsListener, sensorHumidity, SensorManager.SENSOR_DELAY_NORMAL);//}
+    }
+
+    private void showMeATemerature(SensorEvent event) {
+        textTemperature = "Temperature is " + event.values[0];
+
+    }
+    private void showMeHumidity(SensorEvent event){
+        textHumidity = "Humidity is " + event.values[0];
+    }
+
+
+    private SensorEventListener sensorsListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+          //  if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
+                showMeATemerature(event);
+           // }
+           // if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY){
+                showMeHumidity(event);
+           // }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
 
 
 

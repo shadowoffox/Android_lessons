@@ -21,72 +21,33 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String textTemperature;
-    private String textHumidity;
-    private Sensor sensorTemperature;
-    private Sensor sensorHumidity;
-    private SensorManager sensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         initSideMenu(toolbar);
-        getSensors();
+
+/*
         System.out.println("temp@@@@@@@@@"+textTemperature);
         System.out.println("hum@@@@@@@@@@"+textHumidity);
+
         Bundle bundle = new Bundle();
         bundle.putString("TEMPERATURE",textTemperature);
-        bundle.putString("HUMIDITY",textHumidity);
+        bundle.putString("HUMIDITY",textHumidity);*/
 
         if (savedInstanceState==null) {
             Fragment fragment = new TownFragment();
-            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.drawer_layout, fragment)
                     .commit();
         }
 
     }
-
-    private void getSensors(){
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorTemperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        sensorHumidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        if (sensorTemperature != null){
-        sensorManager.registerListener(sensorsListener,sensorTemperature, SensorManager.SENSOR_DELAY_NORMAL);}
-        if (sensorHumidity != null){
-        sensorManager.registerListener(sensorsListener,sensorHumidity, SensorManager.SENSOR_DELAY_NORMAL);}
-    }
-
-    private void showMeATemerature(SensorEvent event) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Temperature is ").append(event.values[0]);
-        textTemperature = stringBuilder.toString();
-    }
-    private void showMeHumidity(SensorEvent event){
-        StringBuilder stringBuilder1 = new StringBuilder();
-        stringBuilder1.append("Humidity is ").append(event.values[0]);
-        textHumidity = stringBuilder1.toString();
-    }
-
-
-    SensorEventListener sensorsListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
-                showMeATemerature(event);
-            }
-            if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY){
-                showMeHumidity(event);
-            }
-        }
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

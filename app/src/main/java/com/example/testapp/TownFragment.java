@@ -20,8 +20,6 @@ public class TownFragment extends Fragment {
     private CheckBox checkBox2;
     private CheckBox checkBox3;
     private Spinner spinner;
-    private String textTemperature;
-    private String textHumidity;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
@@ -32,14 +30,7 @@ public class TownFragment extends Fragment {
         checkBox1 = view.findViewById(R.id.checkBox_1);
         checkBox2 = view.findViewById(R.id.checkBox_2);
         checkBox3 = view.findViewById(R.id.checkBox_3);
-        Bundle bundle = this.getArguments();
-        if (bundle !=null){
-            textTemperature = bundle.getString("TEMPERATURE");
-            textHumidity = bundle.getString("HUMIDITY");
-        }
 
-        System.out.println("temp!!!!!!!!!!!!"+textTemperature);
-        System.out.println("hum!!!!!!!!!"+textHumidity);
         ArrayAdapter<?> adapter =
                 ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.Towns, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -52,19 +43,14 @@ public class TownFragment extends Fragment {
             boolean wind_speed = checkBox2.isChecked();
             boolean pressure = checkBox3.isChecked();
 
-            Bundle bundle1 = new Bundle();
-            bundle1.putString("TEMPERATURE",textTemperature);
-            bundle1.putString("HUMIDITY",textHumidity);
 
             if (getFragmentManager() != null) {
                 Fragment fragment = new WeatherFrament().newInstance(msg,moisture,wind_speed,pressure);
-                fragment.setArguments(bundle1);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout, fragment)
                         .addToBackStack(TownFragment.class.getName())
                         .commit();
             }
-            //   String msg = String.valueOf(editText.getText());
 
         });
 
