@@ -7,7 +7,6 @@
     app:cardElevation="9dp"
     >
 
-
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="90dp"
@@ -15,13 +14,13 @@
     >
 
     <ImageView
-        android:id="@+id/icoWeather"
+        android:id="@+id/ico_weather"
         android:layout_marginEnd="16dp"
         android:layout_width="70dp"
         android:layout_height="50dp" />
 
     <TextView
-        android:id="@+id/resWeather"
+        android:id="@+id/res_weather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"/>
