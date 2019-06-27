@@ -27,7 +27,6 @@ public class WeatherFrament extends Fragment {
     private final WeatherAdapter adapter = new WeatherAdapter(states);
     private RecyclerView recyclerView;
     private TextView textView;
-    private View view;
 
     public static WeatherFrament newInstance(String data, boolean myMoisture, boolean myWind_speed, boolean myPressure) {
        Bundle args = new Bundle();
@@ -52,8 +51,12 @@ public class WeatherFrament extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_weather, container, false);
-        initViews();
+        View view = inflater.inflate(R.layout.fragment_weather, container, false);
+
+        recyclerView = view.findViewById(R.id.recycler_view);
+        textView = view.findViewById(R.id.text_view);
+
+       // initViews();
 
         String values = getArguments().getString(TOWN);
 
@@ -66,11 +69,6 @@ public class WeatherFrament extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
-    }
-
-    private void initViews(){
-        recyclerView = view.findViewById(R.id.recycler_view);
-        textView = view.findViewById(R.id.text_view);
     }
 
     private void setInitialData(){

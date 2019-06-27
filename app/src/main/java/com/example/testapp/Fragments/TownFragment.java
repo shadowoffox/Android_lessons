@@ -19,11 +19,16 @@ public class TownFragment extends Fragment {
     private CheckBox chbxWind;
     private CheckBox chbxPressure;
     private Spinner spinner;
-    private View view;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_town ,container,false);
+       View view = inflater.inflate(R.layout.fragment_town ,container,false);
+
+        spinner = view.findViewById(R.id.spinner_towns);
+        toWetherFragment = view.findViewById(R.id.btn_next);
+        chbxMoisture = view.findViewById(R.id.chbx_moisture);
+        chbxWind = view.findViewById(R.id.chbx_wind_speed);
+        chbxPressure = view.findViewById(R.id.chbx_pressure);
 
         ArrayAdapter<?> adapter =
                 ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.Towns, android.R.layout.simple_spinner_item);
@@ -46,13 +51,5 @@ public class TownFragment extends Fragment {
             }
         });
         return view;
-    }
-
-    private void initView(){
-        spinner = view.findViewById(R.id.spinner_towns);
-        toWetherFragment = view.findViewById(R.id.btn_next);
-        chbxMoisture = view.findViewById(R.id.chbx_moisture);
-        chbxWind = view.findViewById(R.id.chbx_wind_speed);
-        chbxPressure = view.findViewById(R.id.chbx_pressure);
     }
 }
