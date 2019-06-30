@@ -19,7 +19,7 @@ public class WeatherFrament extends Fragment {
 
     private static final String TOWN = "TOWN";
     public static String  strMoisture ="n/a";
-    public static String strWind_speed ="na/";
+    public static String strWind_speed ="n/a";
     public static String strPressure = "n/a";
     public static String textTemperature="n/a";
     public static final List<Weather> states = new ArrayList();
@@ -46,7 +46,7 @@ public class WeatherFrament extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
         textView = view.findViewById(R.id.text_view);
-
+        textView.setText(city);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
