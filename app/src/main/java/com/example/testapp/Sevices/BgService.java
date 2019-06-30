@@ -1,3 +1,4 @@
+/*
 package com.example.testapp.Sevices;
 
 import android.app.IntentService;
@@ -55,3 +56,4 @@ public class BgService extends IntentService {
         }
     };
 }
+*/

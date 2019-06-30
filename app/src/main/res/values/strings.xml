@@ -16,6 +16,8 @@
     <string name="pressure">pressure</string>
     <string name="wind_speed">wind speed</string>
     <string name="moisture">moisture</string>
+    <string name="save_my_town">Save my town</string>
+    <string name="TOWN_IS_SAVED">Town is saved</string>
 
     <string-array name="Towns">
         <item>Moscow</item>

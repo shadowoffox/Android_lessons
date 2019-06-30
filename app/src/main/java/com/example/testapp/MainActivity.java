@@ -7,13 +7,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.example.testapp.Fragments.TownFragment;
-import com.example.testapp.Sevices.BgService;
 import com.google.android.material.navigation.NavigationView;
 import static android.widget.Toast.LENGTH_LONG;
 
@@ -27,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         initSideMenu(toolbar);
-        servises();
 
         if (savedInstanceState==null) {
             Fragment fragment = new TownFragment();
@@ -35,12 +32,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .add(R.id.drawer_layout, fragment)
                     .commit();
         }
-
-    }
-
-    private void servises(){
-        Intent intent = new Intent(getApplicationContext(), BgService.class);
-        startService(intent);
     }
 
     @Override
@@ -63,11 +54,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = menuItem.getItemId();
 
         if (id == R.id.about_me) {
-            Toast toast =Toast.makeText(getApplicationContext(),getString(R.string.den_is_cool), LENGTH_LONG);
-            toast.show();
+            Toast toast1 =Toast.makeText(getApplicationContext(),getString(R.string.den_is_cool), LENGTH_LONG);
+            toast1.show();
         } else if(id == R.id.feedback) {
-            Toast toast =Toast.makeText(getApplicationContext(),"See you later",Toast.LENGTH_LONG);
-            toast.show();
+            Toast toast2 =Toast.makeText(getApplicationContext(),"See you later",Toast.LENGTH_LONG);
+            toast2.show();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
