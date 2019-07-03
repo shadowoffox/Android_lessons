@@ -4,6 +4,7 @@ public class Weather {
     private String res;
     private int weatherResource;
 
+
     public Weather(String res, int weth){
 
         this.res=res;

@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -19,11 +20,20 @@ import androidx.fragment.app.Fragment;
 import com.example.testapp.R;
 import com.example.testapp.Weather;
 import com.example.testapp.WeatherLoader;
+import com.example.testapp.rest.OpenWeatherRepo;
+import com.example.testapp.rest.entities.WeatherRequestRestModel;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.testapp.Fragments.WeatherFrament.states;
 import static com.example.testapp.Fragments.WeatherFrament.strMoisture;
@@ -41,10 +51,9 @@ public class TownFragment extends Fragment {
     private String city;
     private Spinner spinner;
     private SharedPreferences townPreference;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_town ,container,false);
+        View view = inflater.inflate(R.layout.fragment_town ,container,false);
 
         spinner = view.findViewById(R.id.spinner_towns);
         Button toWetherFragment = view.findViewById(R.id.btn_next);
@@ -52,6 +61,7 @@ public class TownFragment extends Fragment {
         CheckBox chbxMoisture = view.findViewById(R.id.chbx_moisture);
         CheckBox chbxWind = view.findViewById(R.id.chbx_wind_speed);
         CheckBox chbxPressure = view.findViewById(R.id.chbx_pressure);
+
 
         moisture = chbxMoisture.isChecked();
         wind_speed = chbxWind.isChecked();
@@ -67,11 +77,13 @@ public class TownFragment extends Fragment {
 
         loadPreference(townPreference);
 
+        updateWeatherData(city);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String[] choose = getResources().getStringArray(R.array.Towns);
                 city = choose[position];
+                updateWeatherData(city);
             }
 
             @Override
@@ -119,7 +131,6 @@ public class TownFragment extends Fragment {
             }
         });
 
-        updateWeatherData(city);
 
         saveTown.setOnClickListener(v -> {
             savePreference(townPreference);
@@ -149,46 +160,33 @@ public class TownFragment extends Fragment {
     private void loadPreference (SharedPreferences sharedPreferences){
         spinner.setSelection(sharedPreferences.getInt(SAVE_MY_TOWN,0));
     }
-
     private void updateWeatherData(final String city) {
-        new Thread() {
-            @Override
-            public void run() {
-                final JSONObject jsonObject = WeatherLoader.getJSONData(city);
-                if(jsonObject == null) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), "lace_not_found", Toast.LENGTH_LONG).show();
+        OpenWeatherRepo.getSingleton().getAPI().loadWeather(city + ",ru",
+                "762ee61f52313fbd10a4eb54ae4d4de2", "metric")
+                .enqueue(new Callback<WeatherRequestRestModel>() {
+                    @Override
+                    public void onResponse(@NonNull Call<WeatherRequestRestModel> call,
+                                           @NonNull Response<WeatherRequestRestModel> response) {
+                        if (response.body() != null && response.isSuccessful()) {
+                            renderWeather(response.body());
                         }
-                    });
-                } else {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            states.clear();
-                            renderWeather(jsonObject);
-                        }
-                    });
-                }
-            }
-        }.start();
+                    }
+
+                    @Override
+                    public void onFailure(Call<WeatherRequestRestModel> call, Throwable t) {
+                        Toast.makeText(getContext(), "ОШИБКА СЕТИ!!!",
+                                Toast.LENGTH_SHORT).show();
+                        t.printStackTrace();
+                    }
+                });
+
     }
 
-    private void renderWeather(JSONObject jsonObject) {
+    private void renderWeather(WeatherRequestRestModel restModel) {
 
-        try {
-            JSONObject details = jsonObject.getJSONArray("weather").getJSONObject(0);
-            JSONObject main = jsonObject.getJSONObject("main");
-            JSONObject wind = jsonObject.getJSONObject("wind");
-
-            setDetails(wind, main);
-            setCurrentTemp(main);
-            setWeatherIcon(details.getInt("id"),jsonObject.getJSONObject("sys").getLong("sunrise") * 1000,jsonObject.getJSONObject("sys").getLong("sunset") * 1000);
-
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
+            setDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
+            setCurrentTemp(restModel.main.temp);
+            setWeatherIcon(restModel.weather[0].id,restModel.sys.sunrise * 1000,restModel.sys.sunset * 1000);
     }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
@@ -198,46 +196,52 @@ public class TownFragment extends Fragment {
         if(actualId == 800) {
             long currentTime = new Date().getTime();
             if(currentTime >= sunrise && currentTime < sunset) {
+                states.clear();
                 states.add(new Weather( String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.sunny));
+
             } else {
+                states.clear();
                 states.add(new Weather ( String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.sunny));
             }
         } else {
             switch (id) {
                 case 2: {
+                    states.clear();
                     states.add(new Weather (String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.stormy));
                     break;
                 }
                 case 3: {
+                    states.clear();
                     states.add(new Weather ( String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.rainy));
                     break;
                 }
                 case 5: {
+                    states.clear();
                     states.add(new Weather ( String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.rainy2));
                     break;
                 }
                 case 8: {
+                    states.clear();
                     states.add(new Weather ( String.format("Temperature %s \n Moisture %s \n Wind %s \n Pressure %s",textTemperature,strMoisture,strWind_speed,strPressure), R.drawable.cloudy));
-
                     break;
                 }
             }
         }
     }
 
-    private void setCurrentTemp(JSONObject main) throws JSONException {
-        textTemperature = String.format(Locale.getDefault(), "%.1f", main.getDouble("temp"));
+    private void setCurrentTemp(float fTemperature) {
+        textTemperature = String.format(Locale.getDefault(), "%.1f", fTemperature);
     }
 
-    private void setDetails(JSONObject wind, JSONObject main) throws JSONException {
+    private void setDetails(float fMoisture, float fPressure, float fWindSpeed){
         if (moisture){
-            strMoisture = main.getString("humidity") + " %";
+            strMoisture = fMoisture + " %";
         }
         if ( pressure) {
-            strPressure = main.getString("pressure") + " hPa";
+            strPressure = fPressure + " hPa";
         }
         if (wind_speed) {
-             strWind_speed= wind.getString("speed") + " m/s";
+             strWind_speed= fWindSpeed + " m/s";
         }
     }
 }
