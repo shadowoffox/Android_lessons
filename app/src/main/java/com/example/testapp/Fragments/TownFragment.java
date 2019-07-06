@@ -17,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.testapp.DataBase.WeatherTable;
 import com.example.testapp.R;
 import com.example.testapp.Weather;
 import com.example.testapp.WeatherLoader;
@@ -43,14 +45,12 @@ import static com.example.testapp.Fragments.WeatherFrament.textTemperature;
 
 public class TownFragment extends Fragment {
 
-    public static final String SAVE_MY_TOWN = "save_my_town";
+    private static final String SAVE_MY_TOWN = "save_my_town";
     private final Handler handler = new Handler();
-    private boolean moisture;
-    private boolean wind_speed;
-    private boolean pressure;
     private String city;
     private Spinner spinner;
     private SharedPreferences townPreference;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_town ,container,false);
@@ -58,26 +58,15 @@ public class TownFragment extends Fragment {
         spinner = view.findViewById(R.id.spinner_towns);
         Button toWetherFragment = view.findViewById(R.id.btn_next);
         Button saveTown = view.findViewById(R.id.btn_save);
-        CheckBox chbxMoisture = view.findViewById(R.id.chbx_moisture);
-        CheckBox chbxWind = view.findViewById(R.id.chbx_wind_speed);
-        CheckBox chbxPressure = view.findViewById(R.id.chbx_pressure);
 
-
-        moisture = chbxMoisture.isChecked();
-        wind_speed = chbxWind.isChecked();
-        pressure = chbxPressure.isChecked();
+        setSpinner();
 
         townPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-        ArrayAdapter<?> adapter =
-                ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.Towns, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
 
         loadPreference(townPreference);
 
         updateWeatherData(city);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -88,49 +77,9 @@ public class TownFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                updateWeatherData(city);
             }
         });
-
-        chbxMoisture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    moisture=true;
-                    updateWeatherData(city);
-                }
-                else {moisture=false;
-                    updateWeatherData(city);
-                }
-            }
-        });
-
-        chbxWind.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    wind_speed=true;
-                    updateWeatherData(city);
-                }
-                else {wind_speed=false;
-                    updateWeatherData(city);
-                }
-
-            }
-        });
-
-        chbxPressure.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    pressure=true;
-                    updateWeatherData(city);
-                }
-                else {pressure=false;
-                    updateWeatherData(city);
-                }
-            }
-        });
-
 
         saveTown.setOnClickListener(v -> {
             savePreference(townPreference);
@@ -145,7 +94,16 @@ public class TownFragment extends Fragment {
                         .commit();
             }
         });
+
         return view;
+    }
+
+    private void setSpinner(){
+        ArrayAdapter<?> adapter =
+                ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.Towns, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
     }
 
     private void savePreference(SharedPreferences sharedPreferences){
@@ -158,10 +116,10 @@ public class TownFragment extends Fragment {
     }
 
     private void loadPreference (SharedPreferences sharedPreferences){
-        spinner.setSelection(sharedPreferences.getInt(SAVE_MY_TOWN,0));
+        spinner.setSelection(sharedPreferences.getInt(SAVE_MY_TOWN,1));
     }
     private void updateWeatherData(final String city) {
-        OpenWeatherRepo.getSingleton().getAPI().loadWeather(city + ",ru",
+        OpenWeatherRepo.getSingleton().getAPI().loadWeather(city + ", RU",
                 "762ee61f52313fbd10a4eb54ae4d4de2", "metric")
                 .enqueue(new Callback<WeatherRequestRestModel>() {
                     @Override
@@ -191,7 +149,6 @@ public class TownFragment extends Fragment {
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
         int id = actualId / 100;
-        String icon = "";
 
         if(actualId == 800) {
             long currentTime = new Date().getTime();
@@ -234,14 +191,22 @@ public class TownFragment extends Fragment {
     }
 
     private void setDetails(float fMoisture, float fPressure, float fWindSpeed){
-        if (moisture){
             strMoisture = fMoisture + " %";
-        }
-        if ( pressure) {
             strPressure = fPressure + " hPa";
+            strWind_speed= fWindSpeed + " m/s";
+
+    }
+
+    private void haveATown(){
+        //всё это на кнопку
+
+        if (/*поиск по таблице со значением city*/){
+            //вызываем update
+            //заполняем listView
         }
-        if (wind_speed) {
-             strWind_speed= fWindSpeed + " m/s";
+        else {
+            //вызываем newTown
+            // пишем пустой listView
         }
     }
 }

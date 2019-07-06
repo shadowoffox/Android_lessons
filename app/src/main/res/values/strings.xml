@@ -20,9 +20,11 @@
     <string name="TOWN_IS_SAVED">Town is saved</string>
 
     <string-array name="Towns">
-        <item>Moscow</item>
-        <item>St.Peterburg</item>
         <item>Tambov</item>
+        <item>Saint Petersburg</item>
         <item>Sochi</item>
+        <item>Kazan</item>
+        <item>Kaliningrad</item>
+        <item>Sviblovo</item>
     </string-array>
 </resources>
