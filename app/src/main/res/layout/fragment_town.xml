@@ -30,4 +30,18 @@
         android:text="@string/save_my_town"
         android:textSize="10sp"/>
 
+    <ListView
+        android:id="@+id/list_wiev"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btn_next"/>
+
+    <TextView
+        android:id="@+id/no_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/nothing_in_history"
+        android:gravity="bottom"/>
+
+
 </RelativeLayout>

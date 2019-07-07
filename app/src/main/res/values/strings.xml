@@ -18,6 +18,7 @@
     <string name="moisture">moisture</string>
     <string name="save_my_town">Save my town</string>
     <string name="TOWN_IS_SAVED">Town is saved</string>
+    <string name="nothing_in_history">nothing in history</string>
 
     <string-array name="Towns">
         <item>Tambov</item>

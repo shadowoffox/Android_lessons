@@ -1,6 +1,7 @@
 package com.example.testapp.Fragments;
 
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -13,12 +14,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.testapp.DataBase.DataBaseHelper;
 import com.example.testapp.DataBase.WeatherTable;
+import com.example.testapp.ListViewAdapter;
 import com.example.testapp.R;
 import com.example.testapp.Weather;
 import com.example.testapp.WeatherLoader;
@@ -47,25 +52,26 @@ public class TownFragment extends Fragment {
 
     private static final String SAVE_MY_TOWN = "save_my_town";
     private final Handler handler = new Handler();
-    private String city;
+    public static String city;
     private Spinner spinner;
+    private Button toWetherFragment;
+    private Button saveTown;
     private SharedPreferences townPreference;
+    private SQLiteDatabase database;
+    private ListView listView;
+    private TextView textView;
+    private ListViewAdapter historyAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_town ,container,false);
-
-        spinner = view.findViewById(R.id.spinner_towns);
-        Button toWetherFragment = view.findViewById(R.id.btn_next);
-        Button saveTown = view.findViewById(R.id.btn_save);
-
+        initialViews(view);
         setSpinner();
-
         townPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
-
         loadPreference(townPreference);
-
         updateWeatherData(city);
+        initDB();
+        initListView(view);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -93,6 +99,7 @@ public class TownFragment extends Fragment {
                         .addToBackStack(TownFragment.class.getName())
                         .commit();
             }
+            haveATown(city);
         });
 
         return view;
@@ -196,17 +203,34 @@ public class TownFragment extends Fragment {
             strWind_speed= fWindSpeed + " m/s";
 
     }
+    private void initDB(){
+        database = new DataBaseHelper(getContext()).getWritableDatabase();
+    }
+    private void initialViews(View view){
+        spinner = view.findViewById(R.id.spinner_towns);
+        toWetherFragment = view.findViewById(R.id.btn_next);
+        saveTown = view.findViewById(R.id.btn_save);
+    }
 
-    private void haveATown(){
+    private void initListView(View view){
+
+        listView = view.findViewById(R.id.list_wiev);
+        textView = view.findViewById(R.id.text_view);
+
+        listView.setEmptyView(textView);
+        historyAdapter = new ListViewAdapter(getContext(),database);
+        listView.setAdapter(historyAdapter);
+
+    }
+
+    private void haveATown(String city){
         //всё это на кнопку
 
-        if (/*поиск по таблице со значением city*/){
-            //вызываем update
-            //заполняем listView
+        if (WeatherTable.getTownWeather(database,city)==null){
+            historyAdapter.addNewElement();
         }
         else {
-            //вызываем newTown
-            // пишем пустой listView
+            historyAdapter.editElement();
         }
     }
 }
