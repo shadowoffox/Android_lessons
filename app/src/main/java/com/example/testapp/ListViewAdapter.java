@@ -51,13 +51,18 @@ public class ListViewAdapter extends BaseAdapter {
 
     public void addNewElement(){
         WeatherTable.addNewTown(database,city,textTemperature,strMoisture,strWind_speed,strPressure);
+
+
+        System.out.println("qqqqqqqqq----");
         notifyDataSetChanged();
     }
 
     public void editElement(){
         if (elements.size()>0){
             WeatherTable.editTown(database,city,textTemperature,strMoisture,strWind_speed,strPressure);
+
             elements.set(elements.size()-1, Arrays.toString(new String[]{city,textTemperature,strMoisture,strWind_speed,strPressure}));
+            System.out.println("qqqqqqqqq----");
             notifyDataSetChanged();
         }
     }
@@ -67,7 +72,7 @@ public class ListViewAdapter extends BaseAdapter {
         if (convertView==null){
             convertView = inflater.inflate(R.layout.list_view_item,parent,false);
         }
-
+        System.out.println(elements);
         String text = elements.get(position);
         TextView textView = convertView.findViewById(R.id.element_text);
         textView.setText(text);

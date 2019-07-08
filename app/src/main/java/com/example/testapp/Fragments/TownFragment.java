@@ -72,7 +72,6 @@ public class TownFragment extends Fragment {
         updateWeatherData(city);
         initDB();
         initListView(view);
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -92,6 +91,7 @@ public class TownFragment extends Fragment {
         });
 
         toWetherFragment.setOnClickListener(v -> {
+            haveATown(city);
             if (getFragmentManager() != null) {
                 Fragment fragment = new WeatherFrament().newInstance(city);
                 getFragmentManager().beginTransaction()
@@ -99,7 +99,6 @@ public class TownFragment extends Fragment {
                         .addToBackStack(TownFragment.class.getName())
                         .commit();
             }
-            haveATown(city);
         });
 
         return view;
@@ -224,13 +223,14 @@ public class TownFragment extends Fragment {
     }
 
     private void haveATown(String city){
-        //всё это на кнопку
 
-        if (WeatherTable.getTownWeather(database,city)==null){
+        if (WeatherTable.getTownWeather(database,city).size()==0){
             historyAdapter.addNewElement();
+            System.out.println("Новый элемент должен быть добавлен");
         }
         else {
             historyAdapter.editElement();
+            System.out.println("элемент должен быть обновлен");
         }
     }
 }
