@@ -1,9 +1,12 @@
 package com.example.testapp.Fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,28 +14,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.testapp.DataBase.DataBaseHelper;
-import com.example.testapp.DataBase.WeatherTable;
-import com.example.testapp.ListViewAdapter;
 import com.example.testapp.R;
 import com.example.testapp.Weather;
-import com.example.testapp.WeatherLoader;
+import com.example.testapp.rest.OpenHereWeatherRepo;
 import com.example.testapp.rest.OpenWeatherRepo;
 import com.example.testapp.rest.entities.WeatherRequestRestModel;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -51,33 +46,47 @@ import static com.example.testapp.Fragments.WeatherFrament.textTemperature;
 public class TownFragment extends Fragment {
 
     private static final String SAVE_MY_TOWN = "save_my_town";
-    private final Handler handler = new Handler();
     public static String city;
     private Spinner spinner;
     private Button toWetherFragment;
     private Button saveTown;
     private SharedPreferences townPreference;
-    private SQLiteDatabase database;
-    private ListView listView;
-    private TextView textView;
-    private ListViewAdapter historyAdapter;
+    private TextView yourLocationView = null;
+
+    private final static String MSG_NO_DATA = "No data";
+
+    private LocationManager mLocManager = null;
+    private LocationListener mLocListener = null;
+
+    private final int permissionRequestCode = 12345;
+
+    private Location loc;
+    private String lat;
+    private String lon;
+    private StringBuilder sb = new StringBuilder();
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,  ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_town ,container,false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_town, container, false);
         initialViews(view);
+
+        mLocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        checkPermiss();
+
         setSpinner();
         townPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
         loadPreference(townPreference);
         updateWeatherData(city);
-        initDB();
-        initListView(view);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String[] choose = getResources().getStringArray(R.array.Towns);
                 city = choose[position];
                 updateWeatherData(city);
+
             }
 
             @Override
@@ -91,7 +100,6 @@ public class TownFragment extends Fragment {
         });
 
         toWetherFragment.setOnClickListener(v -> {
-            haveATown(city);
             if (getFragmentManager() != null) {
                 Fragment fragment = new WeatherFrament().newInstance(city);
                 getFragmentManager().beginTransaction()
@@ -102,6 +110,52 @@ public class TownFragment extends Fragment {
         });
 
         return view;
+    }
+
+
+
+    private void checkPermiss(){
+
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            final String[] permissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
+           // ActivityCompat.requestPermissions(getActivity(),permissions,permissionRequestCode);
+            requestPermissions(permissions,permissionRequestCode);
+
+        } else
+            {loc = mLocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            lat = String.valueOf(loc.getLatitude());
+            lon = String.valueOf(loc.getLongitude());
+                System.out.println(lat + " " + lon);
+            hereWeatherData();
+            yourLocationView.setText(sb.toString());
+            //yourLocationView.setText(locToString(loc));
+            }
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        if(requestCode == permissionRequestCode) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                Toast.makeText(getContext(), "Спасибо!", Toast.LENGTH_SHORT).show();
+                checkPermiss();
+            } else {
+                Toast.makeText(getContext(),
+                        "Извините, апп без данного разрешения может работать неправильно",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private String locToString(Location loc) {
+        if (loc == null) {return MSG_NO_DATA;}
+        else {
+        System.out.println("AAAAAAAAAAAAAAAA" + loc.getAltitude());
+
+        return "Latitude: " + String.valueOf(loc.getLatitude()) + "\n" +
+                "Longitude: " + String.valueOf(loc.getLongitude());}
     }
 
     private void setSpinner(){
@@ -146,11 +200,39 @@ public class TownFragment extends Fragment {
 
     }
 
+    private void hereWeatherData() {
+        System.out.println("Че каво?");
+        OpenHereWeatherRepo.getSingleton().getAPI().loadWeather(lat + "&",lon,
+                "762ee61f52313fbd10a4eb54ae4d4de2")
+                .enqueue(new Callback<WeatherRequestRestModel>() {
+                    @Override
+                    public void onResponse(@NonNull Call<WeatherRequestRestModel> call,
+                                           @NonNull Response<WeatherRequestRestModel> response) {
+                        if (response.body() != null && response.isSuccessful()) {
+                            renderHereWeather(response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<WeatherRequestRestModel> call, Throwable t) {
+                        Toast.makeText(getContext(), "ОШИБКА СЕТИ!!!",
+                                Toast.LENGTH_SHORT).show();
+                        t.printStackTrace();
+                    }
+                });
+
+    }
+
     private void renderWeather(WeatherRequestRestModel restModel) {
 
             setDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
             setCurrentTemp(restModel.main.temp);
             setWeatherIcon(restModel.weather[0].id,restModel.sys.sunrise * 1000,restModel.sys.sunset * 1000);
+    }
+    private void renderHereWeather(WeatherRequestRestModel restModel) {
+
+            setHereDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
+            setHereCurrentTemp(restModel.main.temp);
     }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
@@ -200,37 +282,28 @@ public class TownFragment extends Fragment {
             strMoisture = fMoisture + " %";
             strPressure = fPressure + " hPa";
             strWind_speed= fWindSpeed + " m/s";
+    }
 
+    private void setHereCurrentTemp(float fTemperature) {
+        sb.append(String.format(Locale.getDefault(), "%.1f", fTemperature));
+        System.out.println("AAAAAAAAAAAAAAAAAAAA"+sb.toString());
     }
-    private void initDB(){
-        database = new DataBaseHelper(getContext()).getWritableDatabase();
+    private void setHereDetails(float fMoisture, float fPressure, float fWindSpeed){
+            sb.append(fMoisture).append(" % ");
+            sb.append(fPressure).append(" hPa ");
+            sb.append(fWindSpeed).append(" m/s ");
+        System.out.println("DDDDDDDDDDDDDDDD"+sb.toString());
     }
+
+
     private void initialViews(View view){
         spinner = view.findViewById(R.id.spinner_towns);
         toWetherFragment = view.findViewById(R.id.btn_next);
         saveTown = view.findViewById(R.id.btn_save);
+
+        yourLocationView = view.findViewById(R.id.your_location);
     }
 
-    private void initListView(View view){
 
-        listView = view.findViewById(R.id.list_wiev);
-        textView = view.findViewById(R.id.text_view);
 
-        listView.setEmptyView(textView);
-        historyAdapter = new ListViewAdapter(getContext(),database);
-        listView.setAdapter(historyAdapter);
-
-    }
-
-    private void haveATown(String city){
-
-        if (WeatherTable.getTownWeather(database,city).size()==0){
-            historyAdapter.addNewElement();
-            System.out.println("Новый элемент должен быть добавлен");
-        }
-        else {
-            historyAdapter.editElement();
-            System.out.println("элемент должен быть обновлен");
-        }
-    }
 }

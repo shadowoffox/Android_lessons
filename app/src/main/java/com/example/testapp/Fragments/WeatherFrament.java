@@ -49,7 +49,6 @@ public class WeatherFrament extends Fragment {
         textView.setText(city);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
-
         return view;
     }
 }

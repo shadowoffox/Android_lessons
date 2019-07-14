@@ -30,11 +30,12 @@
         android:text="@string/save_my_town"
         android:textSize="10sp"/>
 
-    <ListView
-        android:id="@+id/list_wiev"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/btn_next"/>
+    <TextView
+        android:id="@+id/your_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_next"
+        android:layout_centerInParent="true"/>
 
 
 </RelativeLayout>

@@ -29,6 +29,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<ViewHolderWeather> {
         Weather weather= weatherList.get(position);
         holder.resWeather.setText(weather.getRes());
         holder.icoWeather.setImageResource(weather.getWeatherResource());
+        //holder.itemView.setBackgroundResource(R.drawable.cloudy);
     }
 
     @Override
