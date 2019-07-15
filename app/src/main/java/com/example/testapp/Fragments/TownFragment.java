@@ -126,10 +126,8 @@ public class TownFragment extends Fragment {
             {loc = mLocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             lat = String.valueOf(loc.getLatitude());
             lon = String.valueOf(loc.getLongitude());
-                System.out.println(lat + " " + lon);
-            hereWeatherData();
+            hereWeatherData(lat,lon);
             yourLocationView.setText(sb.toString());
-            //yourLocationView.setText(locToString(loc));
             }
 
     }
@@ -139,23 +137,14 @@ public class TownFragment extends Fragment {
         if(requestCode == permissionRequestCode) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                Toast.makeText(getContext(), "Спасибо!", Toast.LENGTH_SHORT).show();
                 checkPermiss();
+                Toast.makeText(getContext(), "Спасибо!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getContext(),
                         "Извините, апп без данного разрешения может работать неправильно",
                         Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private String locToString(Location loc) {
-        if (loc == null) {return MSG_NO_DATA;}
-        else {
-        System.out.println("AAAAAAAAAAAAAAAA" + loc.getAltitude());
-
-        return "Latitude: " + String.valueOf(loc.getLatitude()) + "\n" +
-                "Longitude: " + String.valueOf(loc.getLongitude());}
     }
 
     private void setSpinner(){
@@ -200,10 +189,10 @@ public class TownFragment extends Fragment {
 
     }
 
-    private void hereWeatherData() {
+    private void hereWeatherData(String lat, String lon) {
         System.out.println("Че каво?");
-        OpenHereWeatherRepo.getSingleton().getAPI().loadWeather(lat + "&",lon,
-                "762ee61f52313fbd10a4eb54ae4d4de2")
+        OpenHereWeatherRepo.getSingleton().getAPI().loadWeather(lat,lon,
+                "762ee61f52313fbd10a4eb54ae4d4de2","metric")
                 .enqueue(new Callback<WeatherRequestRestModel>() {
                     @Override
                     public void onResponse(@NonNull Call<WeatherRequestRestModel> call,
@@ -230,9 +219,9 @@ public class TownFragment extends Fragment {
             setWeatherIcon(restModel.weather[0].id,restModel.sys.sunrise * 1000,restModel.sys.sunset * 1000);
     }
     private void renderHereWeather(WeatherRequestRestModel restModel) {
-
-            setHereDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
+            setHereTownName(restModel.name);
             setHereCurrentTemp(restModel.main.temp);
+            setHereDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
     }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
@@ -284,15 +273,18 @@ public class TownFragment extends Fragment {
             strWind_speed= fWindSpeed + " m/s";
     }
 
+    private void setHereTownName(String name){
+        sb.append("You are in ").append(name).append(". The wether here is: ").append("\n");
+    }
+
     private void setHereCurrentTemp(float fTemperature) {
-        sb.append(String.format(Locale.getDefault(), "%.1f", fTemperature));
-        System.out.println("AAAAAAAAAAAAAAAAAAAA"+sb.toString());
+        sb.append("tempeteure ").append(String.format(Locale.getDefault(), "%.1f", fTemperature)).append("\n");
+
     }
     private void setHereDetails(float fMoisture, float fPressure, float fWindSpeed){
-            sb.append(fMoisture).append(" % ");
-            sb.append(fPressure).append(" hPa ");
-            sb.append(fWindSpeed).append(" m/s ");
-        System.out.println("DDDDDDDDDDDDDDDD"+sb.toString());
+            sb.append("Moisture is ").append(fMoisture).append(" % ").append("\n");
+            sb.append("Pressure is ").append(fPressure).append(" hPa ").append("\n");
+            sb.append("WindSpeed is ").append(fWindSpeed).append(" m/s ").append("\n");
     }
 
 
