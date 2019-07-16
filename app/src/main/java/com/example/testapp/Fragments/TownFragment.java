@@ -52,11 +52,7 @@ public class TownFragment extends Fragment {
     private Button saveTown;
     private SharedPreferences townPreference;
     private TextView yourLocationView = null;
-
-    private final static String MSG_NO_DATA = "No data";
-
     private LocationManager mLocManager = null;
-    private LocationListener mLocListener = null;
 
     private final int permissionRequestCode = 12345;
 
@@ -73,12 +69,12 @@ public class TownFragment extends Fragment {
 
         mLocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        checkPermiss();
-
         setSpinner();
         townPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
         loadPreference(townPreference);
         updateWeatherData(city);
+        checkPermiss();
+        yourLocationView.setText(sb.toString());
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -86,7 +82,6 @@ public class TownFragment extends Fragment {
                 String[] choose = getResources().getStringArray(R.array.Towns);
                 city = choose[position];
                 updateWeatherData(city);
-
             }
 
             @Override
@@ -108,37 +103,31 @@ public class TownFragment extends Fragment {
                         .commit();
             }
         });
-
         return view;
     }
 
-
-
     private void checkPermiss(){
-
         if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getContext(),android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             final String[] permissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
-           // ActivityCompat.requestPermissions(getActivity(),permissions,permissionRequestCode);
             requestPermissions(permissions,permissionRequestCode);
-
         } else
-            {loc = mLocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            lat = String.valueOf(loc.getLatitude());
-            lon = String.valueOf(loc.getLongitude());
-            hereWeatherData(lat,lon);
-            yourLocationView.setText(sb.toString());
-            }
+            {
+                loc = mLocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                lat = String.valueOf(loc.getLatitude());
+                lon = String.valueOf(loc.getLongitude());
+                hereWeatherData(lat,lon);
 
+            }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if(requestCode == permissionRequestCode) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                checkPermiss();
                 Toast.makeText(getContext(), "Спасибо!", Toast.LENGTH_SHORT).show();
+                checkPermiss();
             } else {
                 Toast.makeText(getContext(),
                         "Извините, апп без данного разрешения может работать неправильно",
@@ -167,6 +156,7 @@ public class TownFragment extends Fragment {
     private void loadPreference (SharedPreferences sharedPreferences){
         spinner.setSelection(sharedPreferences.getInt(SAVE_MY_TOWN,1));
     }
+
     private void updateWeatherData(final String city) {
         OpenWeatherRepo.getSingleton().getAPI().loadWeather(city + ", RU",
                 "762ee61f52313fbd10a4eb54ae4d4de2", "metric")
@@ -190,7 +180,6 @@ public class TownFragment extends Fragment {
     }
 
     private void hereWeatherData(String lat, String lon) {
-        System.out.println("Че каво?");
         OpenHereWeatherRepo.getSingleton().getAPI().loadWeather(lat,lon,
                 "762ee61f52313fbd10a4eb54ae4d4de2","metric")
                 .enqueue(new Callback<WeatherRequestRestModel>() {
@@ -218,10 +207,13 @@ public class TownFragment extends Fragment {
             setCurrentTemp(restModel.main.temp);
             setWeatherIcon(restModel.weather[0].id,restModel.sys.sunrise * 1000,restModel.sys.sunset * 1000);
     }
+
     private void renderHereWeather(WeatherRequestRestModel restModel) {
+        sb.setLength(0);
             setHereTownName(restModel.name);
             setHereCurrentTemp(restModel.main.temp);
             setHereDetails(restModel.main.humidity,restModel.main.pressure,restModel.wind.speed);
+        yourLocationView.setText(sb.toString());
     }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
@@ -274,13 +266,14 @@ public class TownFragment extends Fragment {
     }
 
     private void setHereTownName(String name){
-        sb.append("You are in ").append(name).append(". The wether here is: ").append("\n");
+        sb.append("You are in ").append(name).append(". The weather here is: ").append("\n");
     }
 
     private void setHereCurrentTemp(float fTemperature) {
         sb.append("tempeteure ").append(String.format(Locale.getDefault(), "%.1f", fTemperature)).append("\n");
 
     }
+
     private void setHereDetails(float fMoisture, float fPressure, float fWindSpeed){
             sb.append("Moisture is ").append(fMoisture).append(" % ").append("\n");
             sb.append("Pressure is ").append(fPressure).append(" hPa ").append("\n");
@@ -292,7 +285,6 @@ public class TownFragment extends Fragment {
         spinner = view.findViewById(R.id.spinner_towns);
         toWetherFragment = view.findViewById(R.id.btn_next);
         saveTown = view.findViewById(R.id.btn_save);
-
         yourLocationView = view.findViewById(R.id.your_location);
     }
 
