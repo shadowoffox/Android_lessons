@@ -53,7 +53,7 @@ public class TownFragment extends Fragment {
     private SharedPreferences townPreference;
     private TextView yourLocationView = null;
     private LocationManager mLocManager = null;
-
+    private LocationListener mLocListener = null;
     private final int permissionRequestCode = 12345;
 
     private Location loc;
@@ -113,13 +113,18 @@ public class TownFragment extends Fragment {
             requestPermissions(permissions,permissionRequestCode);
         } else
             {
+
                 loc = mLocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+              //  mLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,10,10,mLocListener);
+                if (loc==null){loc=mLocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);}
                 lat = String.valueOf(loc.getLatitude());
                 lon = String.valueOf(loc.getLongitude());
+                    System.out.println("qqqqqqqq---"+lat + "  qqqqqqqqqqqqwwwwwwwww-----"+lon);
                 hereWeatherData(lat,lon);
 
             }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
