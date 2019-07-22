@@ -2,4 +2,30 @@
     <string name="app_name">testApp</string>
     <string name="new_window">New Window</string>
     <string name="Button">батон</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="change_town">Change town</string>
+    <string name="settings">Settings</string>
+    <string name="share">Share</string>
+    <string name="your_weather">Your weather</string>
+    <string name="username">%USERNAME%</string>
+    <string name="about_me">about me</string>
+    <string name="feedback">feedback</string>
+    <string name="communicate">Communicate</string>
+    <string name="den_is_cool">Den is really cool guy</string>
+    <string name="next">Next</string>
+    <string name="pressure">pressure</string>
+    <string name="wind_speed">wind speed</string>
+    <string name="moisture">moisture</string>
+    <string name="save_my_town">Save my town</string>
+    <string name="TOWN_IS_SAVED">Town is saved</string>
+    <string name="nothing_in_history">nothing in history</string>
+
+    <string-array name="Towns">
+        <item>Tambov</item>
+        <item>Saint Petersburg</item>
+        <item>Sochi</item>
+        <item>Kazan</item>
+        <item>Kaliningrad</item>
+        <item>Sviblovo</item>
+    </string-array>
 </resources>
